@@ -1,23 +1,36 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
+import BreadCrumbs from './Componenets/BreadCrumbs';
+import Images from './Componenets/Images';
+import Navbar from './Componenets/Navbar';
+import SnakeBar from './Componenets/SnakeBar';
+import getImages from './Sevices/Api';
 
 function App() {
+  const [data , setData] = useState([])
+  const [text , setText] = useState("")
+  const [count , setCount] = useState(5)
+  const [open , setOpen] = useState(false)
+
+  useEffect(() => {
+    if(count < 3 || count > 200){
+      setOpen(true)
+      return;
+    }
+    setOpen(false)
+
+    const getData = async() => {
+      const res = await getImages(text , count);
+      setData(res.data.hits)
+    }
+    getData()
+  }, [text , count])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <Navbar/>
+    <BreadCrumbs setCount={setCount} setText={setText} />
+    <Images data={data} />
+    <SnakeBar open={open} setOpen={setOpen} />
     </div>
   );
 }
